@@ -140,14 +140,19 @@ async function cargar() {
         const d = socios[socio];
         const pp = pct(d.ejecutado, d.presupuesto);
         const saldoClass = d.saldo >= 0 ? 'saldo-pos' : 'saldo-neg';
-        html += `
-          <tr>
-            <td>${socio}</td>
-            <td>${fmt(d.presupuesto)}</td>
-            <td>${fmt(d.ejecutado)} <span class="bar-wrap"><span class="bar-fill" style="width:${pp}%"></span></span></td>
-            <td class="${saldoClass}">${fmt(d.saldo)}</td>
-          </tr>
-        `;
+html += `
+  <tr>
+    <td>${socio}</td>
+    <td>${fmt(d.presupuesto)}</td>
+    <td>
+      ${fmt(d.ejecutado)}
+      <div style="width:120px;height:8px;background:#e0e0e0;border-radius:4px;margin-top:4px;">
+        <div style="width:${pp}%;height:8px;background:#E85D04;border-radius:4px;"></div>
+      </div>
+    </td>
+    <td class="${saldoClass}">${fmt(d.saldo)}</td>
+  </tr>
+`;
       }
       html += `</tbody></table></div>`;
     }
