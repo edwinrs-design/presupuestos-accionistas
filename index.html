@@ -1,1 +1,166 @@
-Invoke-RestMethod -Method GET -Uri "https://www.zohoapis.com/creator/v2.1/edwinrsuniadmin/gestion-transferencias/report/Acc_Presupuesto_Reporte" -Headers @{Authorization = "Zoho-oauthtoken 1000.f6db52a3e5bdcd7893ba12d15f6cc0bf.b8f2eef2ef3d7a657b658a8c45072f5e"}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Presupuesto Accionistas 2026</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f0f2f5; color: #1a1a1a; }
+.topbar { background: #1a1a1a; padding: 14px 32px; display: flex; align-items: center; justify-content: space-between; }
+.topbar h1 { color: #fff; font-size: 15px; font-weight: 600; letter-spacing: 0.5px; }
+.topbar span { color: #E85D04; font-size: 12px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; }
+.container { max-width: 1100px; margin: 32px auto; padding: 0 16px; }
+.stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 32px; }
+.stat-card { background: #fff; border-radius: 12px; padding: 20px 24px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+.stat-card .label { font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: #888; margin-bottom: 8px; }
+.stat-card .value { font-size: 28px; font-weight: 800; color: #1a1a1a; }
+.stat-card.ejecutado .value { color: #E85D04; }
+.stat-card.saldo .value { color: #16a34a; }
+.section-title { font-size: 13px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: #888; margin-bottom: 16px; }
+.partida-block { background: #fff; border-radius: 12px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); margin-bottom: 20px; overflow: hidden; }
+.partida-header { background: #1a1a1a; padding: 14px 24px; display: flex; justify-content: space-between; align-items: center; }
+.partida-header .nombre { color: #fff; font-size: 14px; font-weight: 700; letter-spacing: 0.5px; }
+.partida-header .totales { display: flex; gap: 24px; }
+.partida-header .tot { text-align: right; }
+.partida-header .tot .lbl { color: #888; font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
+.partida-header .tot .val { color: #fff; font-size: 13px; font-weight: 700; }
+.partida-header .tot.saldo .val { color: #4ade80; }
+.partida-header .tot.ejecutado .val { color: #fb923c; }
+table { width: 100%; border-collapse: collapse; }
+thead tr { background: #f8f8f8; }
+thead td { padding: 10px 24px; font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: #888; }
+thead td:not(:first-child) { text-align: right; }
+tbody tr { border-bottom: 1px solid #f0f0f0; transition: background 0.15s; }
+tbody tr:hover { background: #fafafa; }
+tbody tr:last-child { border-bottom: none; }
+tbody td { padding: 12px 24px; font-size: 13px; color: #1a1a1a; }
+tbody td:not(:first-child) { text-align: right; font-weight: 600; }
+.bar-wrap { width: 100px; height: 6px; background: #f0f0f0; border-radius: 3px; display: inline-block; vertical-align: middle; margin-left: 8px; }
+.bar-fill { height: 6px; border-radius: 3px; background: #E85D04; }
+.saldo-pos { color: #16a34a; }
+.saldo-neg { color: #dc2626; }
+.loading { text-align: center; padding: 80px; color: #888; font-size: 14px; }
+.updated { text-align: center; font-size: 11px; color: #aaa; margin-top: 24px; padding-bottom: 32px; }
+.btn-refresh { background: #E85D04; color: #fff; border: none; border-radius: 8px; padding: 8px 16px; font-size: 12px; font-weight: 700; cursor: pointer; }
+.btn-refresh:hover { background: #c94d00; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <h1>📊 Presupuesto Accionistas — Gestión 2026</h1>
+  <div style="display:flex;align-items:center;gap:12px;">
+    <span>Universidad Privada Franz Tamayo</span>
+    <button class="btn-refresh" onclick="cargar()">↻ Actualizar</button>
+  </div>
+</div>
+
+<div class="container">
+  <div id="contenido"><div class="loading">⏳ Cargando datos...</div></div>
+  <div class="updated" id="updated"></div>
+</div>
+
+<script>
+const API = "https://script.google.com/a/macros/unifranz.edu.bo/s/AKfycbxSpAh4n8skNacaN_9cyBtwaEK1bqplez5ThzbEfop7Ogr1_KJWGclMQA83ePxOA7tr/exec";
+
+function fmt(n) {
+  return 'Bs ' + Number(n).toLocaleString('es-BO', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+function pct(ej, pr) {
+  if(!pr || pr === 0) return 0;
+  return Math.min(100, Math.round((ej / pr) * 100));
+}
+
+async function cargar() {
+  document.getElementById('contenido').innerHTML = '<div class="loading">⏳ Cargando datos...</div>';
+  document.getElementById('updated').textContent = '';
+  try {
+    const r = await fetch(API);
+    const json = await r.json();
+    if(json.estado !== 'ok') throw new Error('Error en API');
+    
+    const data = json.data;
+    let totalPres = 0, totalEj = 0;
+
+    // Calcular totales globales
+    for(const partida in data) {
+      for(const socio in data[partida]) {
+        totalPres += data[partida][socio].presupuesto;
+        totalEj += data[partida][socio].ejecutado;
+      }
+    }
+    const totalSaldo = totalPres - totalEj;
+    const pctGlobal = pct(totalEj, totalPres);
+
+    let html = `
+      <div class="stats">
+        <div class="stat-card">
+          <div class="label">Presupuesto Total</div>
+          <div class="value">${fmt(totalPres)}</div>
+        </div>
+        <div class="stat-card ejecutado">
+          <div class="label">Ejecutado</div>
+          <div class="value">${fmt(totalEj)}</div>
+        </div>
+        <div class="stat-card saldo">
+          <div class="label">Saldo Disponible</div>
+          <div class="value">${fmt(totalSaldo)}</div>
+        </div>
+      </div>
+      <div class="section-title">Detalle por Partida y Accionista</div>
+    `;
+
+    const partidas = Object.keys(data).sort();
+    for(const partida of partidas) {
+      const socios = data[partida];
+      let subPres = 0, subEj = 0;
+      for(const s in socios) { subPres += socios[s].presupuesto; subEj += socios[s].ejecutado; }
+      const subSaldo = subPres - subEj;
+      const p = pct(subEj, subPres);
+
+      html += `
+        <div class="partida-block">
+          <div class="partida-header">
+            <div class="nombre">${partida}</div>
+            <div class="totales">
+              <div class="tot"><div class="lbl">Presupuesto</div><div class="val">${fmt(subPres)}</div></div>
+              <div class="tot ejecutado"><div class="lbl">Ejecutado</div><div class="val">${fmt(subEj)} <span style="font-size:10px;color:#fb923c;">${p}%</span></div></div>
+              <div class="tot saldo"><div class="lbl">Saldo</div><div class="val">${fmt(subSaldo)}</div></div>
+            </div>
+          </div>
+          <table>
+            <thead><tr><td>Accionista</td><td>Presupuesto</td><td>Ejecutado</td><td>Saldo</td></tr></thead>
+            <tbody>
+      `;
+
+      const sociosOrdenados = Object.keys(socios).sort();
+      for(const socio of sociosOrdenados) {
+        const d = socios[socio];
+        const pp = pct(d.ejecutado, d.presupuesto);
+        const saldoClass = d.saldo >= 0 ? 'saldo-pos' : 'saldo-neg';
+        html += `
+          <tr>
+            <td>${socio}</td>
+            <td>${fmt(d.presupuesto)}</td>
+            <td>${fmt(d.ejecutado)} <span class="bar-wrap"><span class="bar-fill" style="width:${pp}%"></span></span></td>
+            <td class="${saldoClass}">${fmt(d.saldo)}</td>
+          </tr>
+        `;
+      }
+      html += `</tbody></table></div>`;
+    }
+
+    document.getElementById('contenido').innerHTML = html;
+    document.getElementById('updated').textContent = 'Actualizado: ' + new Date().toLocaleString('es-BO');
+
+  } catch(e) {
+    document.getElementById('contenido').innerHTML = '<div class="loading">❌ Error al cargar datos. Intente nuevamente.</div>';
+  }
+}
+
+cargar();
+</script>
+</body>
+</html>
