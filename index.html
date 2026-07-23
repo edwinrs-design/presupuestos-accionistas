@@ -139,6 +139,7 @@ async function cargar() {
       for(const socio of sociosOrdenados) {
         const d = socios[socio];
         const pp = pct(d.ejecutado, d.presupuesto);
+        console.log("PP de " + socio + ": " + pp + "% | ej:" + d.ejecutado + " pr:" + d.presupuesto);
         const saldoClass = d.saldo >= 0 ? 'saldo-pos' : 'saldo-neg';
 html += `
   <tr>
