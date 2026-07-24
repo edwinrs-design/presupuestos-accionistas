@@ -9,11 +9,9 @@
 body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f0f2f5; color: #1a1a1a; }
 .topbar { background: #1a1a1a; padding: 12px 16px; display: flex; flex-direction: column; gap: 8px; }
 .topbar h1 { color: #fff; font-size: 13px; font-weight: 600; }
-@media(min-width: 600px) { .topbar { flex-direction: row; align-items: center; } }
 .topbar span { color: #E85D04; font-size: 12px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; }
 .container { max-width: 1100px; margin: 32px auto; padding: 0 16px; }
 .stats { display: grid; grid-template-columns: 1fr; gap: 12px; margin-bottom: 24px; }
-@media(min-width: 600px) { .stats { grid-template-columns: repeat(3, 1fr); } }
 .stat-card { background: #fff; border-radius: 12px; padding: 20px 24px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
 .stat-card .label { font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: #888; margin-bottom: 8px; }
 .stat-card .value { font-size: 28px; font-weight: 800; color: #1a1a1a; }
@@ -21,9 +19,9 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 .stat-card.saldo .value { color: #16a34a; }
 .section-title { font-size: 13px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: #888; margin-bottom: 16px; }
 .partida-block { background: #fff; border-radius: 12px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); margin-bottom: 20px; overflow: hidden; }
-.partida-header { background: #1a1a1a; padding: 14px 24px; display: flex; justify-content: space-between; align-items: center; }
-.partida-header .nombre { color: #fff; font-size: 14px; font-weight: 700; letter-spacing: 0.5px; }
-.partida-header .totales { display: flex; gap: 24px; }
+.partida-header { background: #1a1a1a; padding: 14px 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
+.partida-header .nombre { color: #fff; font-size: 14px; font-weight: 700; }
+.partida-header .totales { display: flex; gap: 16px; flex-wrap: wrap; }
 .partida-header .tot { text-align: right; }
 .partida-header .tot .lbl { color: #888; font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
 .partida-header .tot .val { color: #fff; font-size: 13px; font-weight: 700; }
@@ -38,20 +36,22 @@ tbody tr:hover { background: #fafafa; }
 tbody tr:last-child { border-bottom: none; }
 tbody td { padding: 12px 24px; font-size: 13px; color: #1a1a1a; }
 tbody td:not(:first-child) { text-align: right; font-weight: 600; }
-.bar-wrap { width: 120px; height: 8px; background: #e0e0e0; border-radius: 4px; display: inline-block; vertical-align: middle; margin-left: 8px; }
-.bar-fill { height: 8px; border-radius: 4px; background: #E85D04; }
 .saldo-pos { color: #16a34a; }
 .saldo-neg { color: #dc2626; }
 .loading { text-align: center; padding: 80px; color: #888; font-size: 14px; }
 .updated { text-align: center; font-size: 11px; color: #aaa; margin-top: 24px; padding-bottom: 32px; }
 .btn-refresh { background: #E85D04; color: #fff; border: none; border-radius: 8px; padding: 8px 16px; font-size: 12px; font-weight: 700; cursor: pointer; }
 .btn-refresh:hover { background: #c94d00; }
-  @media(max-width: 600px) {
+@media(min-width: 600px) {
+  .topbar { flex-direction: row; align-items: center; }
+  .stats { grid-template-columns: repeat(3, 1fr); }
+}
+@media(max-width: 600px) {
   table thead { display: none; }
   tbody tr { display: block; padding: 12px 16px; border-bottom: 1px solid #f0f0f0; }
-  tbody td { display: flex; justify-content: space-between; padding: 3px 0; font-size: 13px; }
-  tbody td:first-child { font-weight: 500; margin-bottom: 6px; }
-  tbody td:before { content: attr(data-label); color: #888; font-size: 11px; font-weight: 700; text-transform: uppercase; }
+  tbody td { display: flex; justify-content: space-between; align-items: center; padding: 4px 0; font-size: 13px; }
+  tbody td:first-child { font-weight: 500; margin-bottom: 4px; }
+  tbody td:before { content: attr(data-label); color: #888; font-size: 11px; font-weight: 700; text-transform: uppercase; margin-right: 8px; }
 }
 </style>
 </head>
@@ -89,11 +89,10 @@ async function cargar() {
     const r = await fetch(API);
     const json = await r.json();
     if(json.estado !== 'ok') throw new Error('Error en API');
-    
+
     const data = json.data;
     let totalPres = 0, totalEj = 0;
 
-    // Calcular totales globales
     for(const partida in data) {
       for(const socio in data[partida]) {
         totalPres += data[partida][socio].presupuesto;
@@ -101,7 +100,6 @@ async function cargar() {
       }
     }
     const totalSaldo = totalPres - totalEj;
-    const pctGlobal = pct(totalEj, totalPres);
 
     let html = `
       <div class="stats">
@@ -129,39 +127,39 @@ async function cargar() {
       const subSaldo = subPres - subEj;
       const p = pct(subEj, subPres);
 
-html += `
-  <tr>
-    <td data-label="">${socio}</td>
-    <td data-label="Presupuesto">${fmt(d.presupuesto)}</td>
-    <td data-label="Ejecutado">
-      ${fmt(d.ejecutado)}
-      <div style="width:120px;height:8px;background:#e0e0e0;border-radius:4px;margin-top:4px;">
-        <div style="width:${pp}%;height:8px;background:#E85D04;border-radius:4px;"></div>
-      </div>
-    </td>
-    <td data-label="Saldo" class="${saldoClass}">${fmt(d.saldo)}</td>
-  </tr>
-`;
+      html += `
+        <div class="partida-block">
+          <div class="partida-header">
+            <div class="nombre">${partida}</div>
+            <div class="totales">
+              <div class="tot"><div class="lbl">Presupuesto</div><div class="val">${fmt(subPres)}</div></div>
+              <div class="tot ejecutado"><div class="lbl">Ejecutado</div><div class="val">${fmt(subEj)} <span style="font-size:10px;color:#fb923c;">${p}%</span></div></div>
+              <div class="tot saldo"><div class="lbl">Saldo</div><div class="val">${fmt(subSaldo)}</div></div>
+            </div>
+          </div>
+          <table>
+            <thead><tr><td>Accionista</td><td>Presupuesto</td><td>Ejecutado</td><td>Saldo</td></tr></thead>
+            <tbody>
+      `;
 
       const sociosOrdenados = Object.keys(socios).sort();
       for(const socio of sociosOrdenados) {
         const d = socios[socio];
         const pp = pct(d.ejecutado, d.presupuesto);
-        
         const saldoClass = d.saldo >= 0 ? 'saldo-pos' : 'saldo-neg';
-html += `
-  <tr>
-    <td>${socio}</td>
-    <td>${fmt(d.presupuesto)}</td>
-    <td>
-      ${fmt(d.ejecutado)}
-      <div style="width:120px;height:8px;background:#e0e0e0;border-radius:4px;margin-top:4px;">
-        <div style="width:${pp}%;height:8px;background:#E85D04;border-radius:4px;"></div>
-      </div>
-    </td>
-    <td class="${saldoClass}">${fmt(d.saldo)}</td>
-  </tr>
-`;
+        html += `
+          <tr>
+            <td data-label="">${socio}</td>
+            <td data-label="Presupuesto">${fmt(d.presupuesto)}</td>
+            <td data-label="Ejecutado">
+              ${fmt(d.ejecutado)}
+              <div style="width:80px;height:6px;background:#e0e0e0;border-radius:4px;margin-top:4px;">
+                <div style="width:${pp}%;height:6px;background:#E85D04;border-radius:4px;"></div>
+              </div>
+            </td>
+            <td data-label="Saldo" class="${saldoClass}">${fmt(d.saldo)}</td>
+          </tr>
+        `;
       }
       html += `</tbody></table></div>`;
     }
