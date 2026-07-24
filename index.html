@@ -67,7 +67,7 @@ tbody td:not(:first-child) { text-align: right; font-weight: 600; }
 const API = "https://script.google.com/macros/s/AKfycbxSpAh4n8skNacaN_9cyBtwaEK1bqplez5ThzbEfop7Ogr1_KJWGclMQA83ePxOA7tr/exec";
 
 function fmt(n) {
-  return 'Bs ' + Number(n).toLocaleString('es-BO', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+  return 'Bs ' + Math.round(Number(n)).toLocaleString('es');
 }
 
 function pct(ej, pr) {
