@@ -40,15 +40,13 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 .socio-nombre { font-size: 13px; font-weight: 600; color: #333; display: flex; align-items: center; gap: 8px; }
 .socio-arrow { color: #E85D04; font-size: 14px; transition: transform 0.2s; }
 .socio-arrow.open { transform: rotate(90deg); }
-.socio-nums { display: flex; gap: 20px; flex-wrap: wrap; }
+.socio-nums { display: flex; gap: 20px; flex-wrap: wrap; align-items: flex-start; }
 .sn { text-align: right; }
 .sn .sl { font-size: 10px; font-weight: 700; text-transform: uppercase; color: #888; }
 .sn .sv { font-size: 13px; font-weight: 700; color: #1a1a1a; }
 .sn.sej .sv { color: #E85D04; }
 .sn.ssal .sv { color: #16a34a; }
 .sn.sneg .sv { color: #dc2626; }
-.bar-wrap { width: 80px; height: 5px; background: #e0e0e0; border-radius: 3px; display: inline-block; vertical-align: middle; margin-left: 6px; }
-.bar-fill { height: 5px; border-radius: 3px; background: #E85D04; }
 .socio-body { display: none; padding: 0 20px 12px 20px; }
 .socio-body.open { display: block; }
 .solicitud-item { padding: 10px 14px; background: #f8f8f8; border-radius: 8px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
@@ -169,31 +167,32 @@ async function cargar() {
       const sociosOrdenados = Object.keys(socios).sort();
       sociosOrdenados.forEach((socio, si) => {
         const d = socios[socio];
-        const pctSocio = pct(Number(d.ejecutado), Number(d.presupuesto));
+        const pctSocio = pct(d.ejecutado, d.presupuesto);
+        console.log(socio + " pct:" + pctSocio + " ej:" + d.ejecutado + " pr:" + d.presupuesto);
         const saldoClass = parseFloat(d.saldo) >= 0 ? 'ssal' : 'sneg';
         const sid = pid + 's' + si;
 
-html += `
-  <div class="socio-block">
-    <div class="socio-header" onclick="toggle('${sid}')">
-      <div class="socio-nombre">
-        <span id="arrow-${sid}" class="socio-arrow">▶</span>
-        ${socio}
-      </div>
-      <div class="socio-nums">
-        <div class="sn"><div class="sl">Presupuesto</div><div class="sv">${fmt(d.presupuesto)}</div></div>
-        <div class="sn sej">
-          <div class="sl">Ejecutado</div>
-          <div class="sv">${fmt(d.ejecutado)}</div>
-          <div style="width:80px;height:6px;background:#e0e0e0;border-radius:3px;margin-top:4px;">
-            <div style="width:${pctSocio}%;height:6px;background:#E85D04;border-radius:3px;"></div>
-          </div>
-        </div>
-        <div class="sn ${saldoClass}"><div class="sl">Saldo</div><div class="sv">${fmt(d.saldo)}</div></div>
-      </div>
-    </div>
-    <div class="socio-body" id="${sid}">
-`;
+        html += `
+          <div class="socio-block">
+            <div class="socio-header" onclick="toggle('${sid}')">
+              <div class="socio-nombre">
+                <span id="arrow-${sid}" class="socio-arrow">▶</span>
+                ${socio}
+              </div>
+              <div class="socio-nums">
+                <div class="sn"><div class="sl">Presupuesto</div><div class="sv">${fmt(d.presupuesto)}</div></div>
+                <div class="sn sej">
+                  <div class="sl">Ejecutado</div>
+                  <div class="sv">${fmt(d.ejecutado)}</div>
+                  <div style="width:80px;height:6px;background:#e0e0e0;border-radius:3px;margin-top:4px;">
+                    <div style="width:${pctSocio}%;height:6px;background:#E85D04;border-radius:3px;"></div>
+                  </div>
+                </div>
+                <div class="sn ${saldoClass}"><div class="sl">Saldo</div><div class="sv">${fmt(d.saldo)}</div></div>
+              </div>
+            </div>
+            <div class="socio-body" id="${sid}">
+        `;
 
         if(d.solicitudes && d.solicitudes.length > 0) {
           d.solicitudes.forEach(sol => {
