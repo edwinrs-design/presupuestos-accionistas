@@ -102,6 +102,8 @@ function fmt(n) {
 }
 
 function pct(ej, pr) {
+  ej = parseFloat(ej) || 0;
+  pr = parseFloat(pr) || 0;
   if(!pr || pr === 0) return 0;
   return Math.min(100, Math.round((ej / pr) * 100));
 }
