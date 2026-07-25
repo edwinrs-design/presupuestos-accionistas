@@ -173,21 +173,27 @@ async function cargar() {
         const saldoClass = parseFloat(d.saldo) >= 0 ? 'ssal' : 'sneg';
         const sid = pid + 's' + si;
 
-        html += `
-          <div class="socio-block">
-            <div class="socio-header" onclick="toggle('${sid}')">
-              <div class="socio-nombre">
-                <span id="arrow-${sid}" class="socio-arrow">▶</span>
-                ${socio}
-              </div>
-              <div class="socio-nums">
-                <div class="sn"><div class="sl">Presupuesto</div><div class="sv">${fmt(d.presupuesto)}</div></div>
-                <div class="sn sej"><div class="sl">Ejecutado</div><div class="sv">${fmt(d.ejecutado)} <span class="bar-wrap"><span class="bar-fill" style="width:${pctSocio}%"></span></span></div></div>
-                <div class="sn ${saldoClass}"><div class="sl">Saldo</div><div class="sv">${fmt(d.saldo)}</div></div>
-              </div>
-            </div>
-            <div class="socio-body" id="${sid}">
-        `;
+html += `
+  <div class="socio-block">
+    <div class="socio-header" onclick="toggle('${sid}')">
+      <div class="socio-nombre">
+        <span id="arrow-${sid}" class="socio-arrow">▶</span>
+        ${socio}
+      </div>
+      <div class="socio-nums">
+        <div class="sn"><div class="sl">Presupuesto</div><div class="sv">${fmt(d.presupuesto)}</div></div>
+        <div class="sn sej">
+          <div class="sl">Ejecutado</div>
+          <div class="sv">${fmt(d.ejecutado)}</div>
+          <div style="width:80px;height:6px;background:#e0e0e0;border-radius:3px;margin-top:4px;">
+            <div style="width:${pctSocio}%;height:6px;background:#E85D04;border-radius:3px;"></div>
+          </div>
+        </div>
+        <div class="sn ${saldoClass}"><div class="sl">Saldo</div><div class="sv">${fmt(d.saldo)}</div></div>
+      </div>
+    </div>
+    <div class="socio-body" id="${sid}">
+`;
 
         if(d.solicitudes && d.solicitudes.length > 0) {
           d.solicitudes.forEach(sol => {
