@@ -169,7 +169,7 @@ async function cargar() {
       const sociosOrdenados = Object.keys(socios).sort();
       sociosOrdenados.forEach((socio, si) => {
         const d = socios[socio];
-        const pctSocio = pct(d.ejecutado, d.presupuesto);
+        const pctSocio = pct(Number(d.ejecutado), Number(d.presupuesto));
         const saldoClass = parseFloat(d.saldo) >= 0 ? 'ssal' : 'sneg';
         const sid = pid + 's' + si;
 
