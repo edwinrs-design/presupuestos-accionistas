@@ -40,7 +40,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 .socio-nombre { font-size: 13px; font-weight: 600; color: #333; display: flex; align-items: center; gap: 8px; }
 .socio-arrow { color: #E85D04; font-size: 14px; transition: transform 0.2s; }
 .socio-arrow.open { transform: rotate(90deg); }
-.socio-nums { display: flex; gap: 20px; flex-wrap: wrap; align-items: flex-start; }
+.socio-nums { display: flex; gap: 20px; flex-wrap: wrap; align-items: center; }
 .sn { text-align: right; }
 .sn .sl { font-size: 10px; font-weight: 700; text-transform: uppercase; color: #888; }
 .sn .sv { font-size: 13px; font-weight: 700; color: #1a1a1a; }
@@ -168,7 +168,6 @@ async function cargar() {
       sociosOrdenados.forEach((socio, si) => {
         const d = socios[socio];
         const pctSocio = pct(d.ejecutado, d.presupuesto);
-        console.log(socio + " pct:" + pctSocio + " ej:" + d.ejecutado + " pr:" + d.presupuesto);
         const saldoClass = parseFloat(d.saldo) >= 0 ? 'ssal' : 'sneg';
         const sid = pid + 's' + si;
 
