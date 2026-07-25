@@ -7,25 +7,19 @@
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f0f2f5; color: #1a1a1a; }
-
 .topbar { background: #1a1a1a; padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; flex-wrap: wrap; gap: 8px; }
 .topbar h1 { color: #fff; font-size: 13px; font-weight: 600; }
 .topbar span { color: #E85D04; font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
 .btn-refresh { background: #E85D04; color: #fff; border: none; border-radius: 8px; padding: 7px 14px; font-size: 12px; font-weight: 700; cursor: pointer; }
-
 .container { max-width: 1100px; margin: 24px auto; padding: 0 16px; }
-
 .stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; margin-bottom: 24px; }
 .stat-card { background: #fff; border-radius: 12px; padding: 16px 20px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
 .stat-card .lbl { font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: #888; margin-bottom: 6px; }
 .stat-card .val { font-size: 24px; font-weight: 800; color: #1a1a1a; }
 .stat-card.ej .val { color: #E85D04; }
 .stat-card.sal .val { color: #16a34a; }
-
 .section-title { font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: #888; margin-bottom: 12px; }
-
 .partida-block { background: #fff; border-radius: 12px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); margin-bottom: 16px; overflow: hidden; }
-
 .partida-header { background: #1a1a1a; padding: 14px 20px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; gap: 12px; flex-wrap: wrap; }
 .partida-header:hover { background: #2a2a2a; }
 .partida-nombre { color: #fff; font-size: 14px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
@@ -37,13 +31,10 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 .tot .tv { color: #fff; font-size: 13px; font-weight: 700; }
 .tot.tej .tv { color: #fb923c; }
 .tot.tsal .tv { color: #4ade80; }
-
 .partida-body { display: none; }
 .partida-body.open { display: block; }
-
 .socio-block { border-bottom: 1px solid #f0f0f0; }
 .socio-block:last-child { border-bottom: none; }
-
 .socio-header { padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; background: #fafafa; border-left: 4px solid #E85D04; flex-wrap: wrap; gap: 8px; }
 .socio-header:hover { background: #f1f1f1; }
 .socio-nombre { font-size: 13px; font-weight: 600; color: #333; display: flex; align-items: center; gap: 8px; }
@@ -56,22 +47,17 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 .sn.sej .sv { color: #E85D04; }
 .sn.ssal .sv { color: #16a34a; }
 .sn.sneg .sv { color: #dc2626; }
-
 .bar-wrap { width: 80px; height: 5px; background: #e0e0e0; border-radius: 3px; display: inline-block; vertical-align: middle; margin-left: 6px; }
 .bar-fill { height: 5px; border-radius: 3px; background: #E85D04; }
-
 .socio-body { display: none; padding: 0 20px 12px 20px; }
 .socio-body.open { display: block; }
-
 .solicitud-item { padding: 10px 14px; background: #f8f8f8; border-radius: 8px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
 .sol-fecha { font-size: 11px; color: #888; white-space: nowrap; }
 .sol-importe { font-size: 14px; font-weight: 700; color: #1a1a1a; white-space: nowrap; }
 .sol-detalle { font-size: 12px; color: #555; flex: 1; }
 .no-solicitudes { font-size: 12px; color: #aaa; padding: 8px 0; }
-
 .loading { text-align: center; padding: 80px; color: #888; font-size: 14px; }
 .updated { text-align: center; font-size: 11px; color: #aaa; margin-top: 16px; padding-bottom: 24px; }
-
 @media(max-width: 600px) {
   .stats { grid-template-columns: 1fr; }
   .partida-totales { gap: 12px; }
@@ -80,7 +66,6 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 </style>
 </head>
 <body>
-
 <div class="topbar">
   <div>
     <h1>📊 Presupuesto Accionistas — Gestión 2026</h1>
@@ -88,12 +73,10 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
   </div>
   <button class="btn-refresh" onclick="cargar()">↻ Actualizar</button>
 </div>
-
 <div class="container">
   <div id="contenido"><div class="loading">⏳ Cargando datos...</div></div>
   <div class="updated" id="updated"></div>
 </div>
-
 <script>
 const API = "https://script.google.com/macros/s/AKfycbxSpAh4n8skNacaN_9cyBtwaEK1bqplez5ThzbEfop7Ogr1_KJWGclMQA83ePxOA7tr/exec";
 
@@ -104,7 +87,7 @@ function fmt(n) {
 function pct(ej, pr) {
   ej = parseFloat(ej) || 0;
   pr = parseFloat(pr) || 0;
-  if(!pr || pr === 0) return 0;
+  if(!pr) return 0;
   return Math.min(100, Math.round((ej / pr) * 100));
 }
 
@@ -131,8 +114,8 @@ async function cargar() {
     let totalPres = 0, totalEj = 0;
     for(const partida in data) {
       for(const socio in data[partida]) {
-        totalPres += data[partida][socio].presupuesto;
-        totalEj += data[partida][socio].ejecutado;
+        totalPres += parseFloat(data[partida][socio].presupuesto) || 0;
+        totalEj += parseFloat(data[partida][socio].ejecutado) || 0;
       }
     }
     const totalSaldo = totalPres - totalEj;
@@ -159,9 +142,12 @@ async function cargar() {
     partidas.forEach((partida, pi) => {
       const socios = data[partida];
       let subPres = 0, subEj = 0;
-      for(const s in socios) { subPres += socios[s].presupuesto; subEj += socios[s].ejecutado; }
+      for(const s in socios) {
+        subPres += parseFloat(socios[s].presupuesto) || 0;
+        subEj += parseFloat(socios[s].ejecutado) || 0;
+      }
       const subSaldo = subPres - subEj;
-      const p = pct(subEj, subPres);
+      const pctPartida = pct(subEj, subPres);
       const pid = 'p' + pi;
 
       html += `
@@ -173,7 +159,7 @@ async function cargar() {
             </div>
             <div class="partida-totales">
               <div class="tot"><div class="tl">Presupuesto</div><div class="tv">${fmt(subPres)}</div></div>
-              <div class="tot tej"><div class="tl">Ejecutado</div><div class="tv">${fmt(subEj)} <span style="font-size:10px;">${p}%</span></div></div>
+              <div class="tot tej"><div class="tl">Ejecutado</div><div class="tv">${fmt(subEj)} <span style="font-size:10px;">${pctPartida}%</span></div></div>
               <div class="tot tsal"><div class="tl">Saldo</div><div class="tv">${fmt(subSaldo)}</div></div>
             </div>
           </div>
@@ -183,11 +169,8 @@ async function cargar() {
       const sociosOrdenados = Object.keys(socios).sort();
       sociosOrdenados.forEach((socio, si) => {
         const d = socios[socio];
-        console.log
-        const pp = pct(d.ejecutado, d.presupuesto);
-       const pPartida = pct(subEj, subPres);
-alert(socio + ": ej=" + d.ejecutado + " pr=" + d.presupuesto + " pp=" + pp);
-        const saldoClass = d.saldo >= 0 ? 'ssal' : 'sneg';
+        const pctSocio = pct(d.ejecutado, d.presupuesto);
+        const saldoClass = parseFloat(d.saldo) >= 0 ? 'ssal' : 'sneg';
         const sid = pid + 's' + si;
 
         html += `
@@ -199,7 +182,7 @@ alert(socio + ": ej=" + d.ejecutado + " pr=" + d.presupuesto + " pp=" + pp);
               </div>
               <div class="socio-nums">
                 <div class="sn"><div class="sl">Presupuesto</div><div class="sv">${fmt(d.presupuesto)}</div></div>
-                <div class="sn sej"><div class="sl">Ejecutado</div><div class="sv">${fmt(d.ejecutado)} <span class="bar-wrap"><span class="bar-fill" style="width:${pp}%"></span></span></div></div>
+                <div class="sn sej"><div class="sl">Ejecutado</div><div class="sv">${fmt(d.ejecutado)} <span class="bar-wrap"><span class="bar-fill" style="width:${pctSocio}%"></span></span></div></div>
                 <div class="sn ${saldoClass}"><div class="sl">Saldo</div><div class="sv">${fmt(d.saldo)}</div></div>
               </div>
             </div>
