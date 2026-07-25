@@ -185,6 +185,8 @@ async function cargar() {
         const d = socios[socio];
         console.log
         const pp = pct(d.ejecutado, d.presupuesto);
+        const pp = pct(d.ejecutado, d.presupuesto);
+alert(socio + ": ej=" + d.ejecutado + " pr=" + d.presupuesto + " pp=" + pp);
         const saldoClass = d.saldo >= 0 ? 'ssal' : 'sneg';
         const sid = pid + 's' + si;
 
