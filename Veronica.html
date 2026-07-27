@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Presupuesto Verónica Agreda De Paz 2026</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f0f2f5; color: #1a1a1a; }
+.topbar { background: #1a1a1a; padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; flex-wrap: wrap; gap: 8px; }
+.topbar h1 { color: #fff; font-size: 13px; font-weight: 600; }
+.topbar span { color: #E85D04; font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
+.btn-refresh { background: #E85D04; color: #fff; border: none; border-radius: 8px; padding: 7px 14px; font-size: 12px; font-weight: 700; cursor: pointer; }
+.container { max-width: 900px; margin: 24px auto; padding: 0 16px; }
+.nombre-socio { background: #fff; border-radius: 12px; padding: 20px 24px; margin-bottom: 20px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); display: flex; align-items: center; gap: 16px; }
+.avatar { width: 48px; height: 48px; border-radius: 50%; background: #E85D04; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 18px; font-weight: 700; }
+.nombre-socio h2 { font-size: 18px; font-weight: 700; color: #1a1a1a; }
+.nombre-socio p { font-size: 12px; color: #888; margin-top: 2px; }
+.stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; margin-bottom: 24px; }
+.stat-card { background: #fff; border-radius: 12px; padding: 16px 20px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+.stat-card .lbl { font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: #888; margin-bottom: 6px; }
+.stat-card .val { font-size: 24px; font-weight: 800; color: #1a1a1a; }
+.stat-card.ej .val { color: #E85D04; }
+.stat-card.sal .val { color: #16a34a; }
+.section-title { font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: #888; margin-bottom: 12px; }
+.partida-block { background: #fff; border-radius: 12px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); margin-bottom: 16px; overflow: hidden; }
+.partida-header { background: #1a1a1a; padding: 14px 20px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; gap: 12px; flex-wrap: wrap; }
+.partida-header:hover { background: #2a2a2a; }
+.partida-nombre { color: #fff; font-size: 14px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+.partida-arrow { color: #E85D04; font-size: 16px; transition: transform 0.2s; }
+.partida-arrow.open { transform: rotate(90deg); }
+.partida-totales { display: flex; gap: 20px; flex-wrap: wrap; }
+.tot { text-align: right; }
+.tot .tl { color: #666; font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
+.tot .tv { color: #fff; font-size: 13px; font-weight: 700; }
+.tot.tej .tv { color: #fb923c; }
+.tot.tsal .tv { color: #4ade80; }
+.partida-body { display: none; padding: 0; }
+.partida-body.open { display: block; }
+.solicitud-item { padding: 12px 20px; border-bottom: 1px solid #f0f0f0; display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+.solicitud-item:last-child { border-bottom: none; }
+.sol-fecha { font-size: 11px; color: #888; white-space: nowrap; }
+.sol-importe { font-size: 14px; font-weight: 700; color: #1a1a1a; white-space: nowrap; }
+.sol-detalle { font-size: 12px; color: #555; flex: 1; }
+.no-solicitudes { font-size: 12px; color: #aaa; padding: 12px 20px; }
+.bar-row { padding: 8px 20px 12px; background: #fafafa; }
+.bar-label { font-size: 11px; color: #888; margin-bottom: 4px; display: flex; justify-content: space-between; }
+.bar-bg { width: 100%; height: 8px; background: #e0e0e0; border-radius: 4px; }
+.bar-fill { height: 8px; border-radius: 4px; background: #E85D04; }
+.loading { text-align: center; padding: 80px; color: #888; font-size: 14px; }
+.updated { text-align: center; font-size: 11px; color: #aaa; margin-top: 16px; padding-bottom: 24px; }
+@media(max-width: 600px) { .stats { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div>
+    <h1>📊 Mi Presupuesto — Gestión 2026</h1>
+    <span>Universidad Privada Franz Tamayo</span>
+  </div>
+  <button class="btn-refresh" onclick="cargar()">↻ Actualizar</button>
+</div>
+<div class="container">
+  <div class="nombre-socio">
+    <div class="avatar">GA</div>
+    <div>
+      <h2>Verónica Agreda De Pazos</h2>
+      <p>Accionista — Gestión 2026</p>
+    </div>
+  </div>
+  <div id="contenido"><div class="loading">⏳ Cargando datos...</div></div>
+  <div class="updated" id="updated"></div>
+</div>
+<script>
+const API = "https://script.google.com/macros/s/AKfycbxSpAh4n8skNacaN_9cyBtwaEK1bqplez5ThzbEfop7Ogr1_KJWGclMQA83ePxOA7tr/exec";
+const SOCIO = "VERÓNCA AGREDA DE PAZOS";
+
+function fmt(n) {
+  return 'Bs ' + Math.round(Number(n)).toLocaleString('es');
+}
+
+function pct(ej, pr) {
+  ej = parseFloat(ej) || 0;
+  pr = parseFloat(pr) || 0;
+  if(!pr) return 0;
+  return Math.min(100, Math.round((ej / pr) * 100));
+}
+
+function stripHtml(html) {
+  return html ? html.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim() : '';
+}
+
+function toggle(id) {
+  const el = document.getElementById(id);
+  const arrow = document.getElementById('arrow-' + id);
+  if(el) el.classList.toggle('open');
+  if(arrow) arrow.classList.toggle('open');
+}
+
+async function cargar() {
+  document.getElementById('contenido').innerHTML = '<div class="loading">⏳ Cargando datos...</div>';
+  document.getElementById('updated').textContent = '';
+  try {
+    const r = await fetch(API);
+    const json = await r.json();
+    if(json.estado !== 'ok') throw new Error('Error en API');
+
+    const data = json.data;
+    let totalPres = 0, totalEj = 0;
+
+    // Filtrar solo partidas del socio
+    const partidas = Object.keys(data).sort().filter(partida => data[partida][SOCIO]);
+
+    for(const partida of partidas) {
+      const d = data[partida][SOCIO];
+      totalPres += parseFloat(d.presupuesto) || 0;
+      totalEj += parseFloat(d.ejecutado) || 0;
+    }
+    const totalSaldo = totalPres - totalEj;
+    const pctTotal = pct(totalEj, totalPres);
+
+    let html = `
+      <div class="stats">
+        <div class="stat-card">
+          <div class="lbl">Presupuesto Total</div>
+          <div class="val">${fmt(totalPres)}</div>
+        </div>
+        <div class="stat-card ej">
+          <div class="lbl">Ejecutado</div>
+          <div class="val">${fmt(totalEj)}</div>
+        </div>
+        <div class="stat-card sal">
+          <div class="lbl">Saldo Disponible</div>
+          <div class="val">${fmt(totalSaldo)}</div>
+        </div>
+      </div>
+      <div class="section-title">Detalle por Partida</div>
+    `;
+
+    partidas.forEach((partida, pi) => {
+      const d = data[partida][SOCIO];
+      const pp = pct(d.ejecutado, d.presupuesto);
+      const pid = 'p' + pi;
+
+      html += `
+        <div class="partida-block">
+          <div class="partida-header" onclick="toggle('${pid}')">
+            <div class="partida-nombre">
+              <span id="arrow-${pid}" class="partida-arrow">▶</span>
+              ${partida}
+            </div>
+            <div class="partida-totales">
+              <div class="tot"><div class="tl">Presupuesto</div><div class="tv">${fmt(d.presupuesto)}</div></div>
+              <div class="tot tej"><div class="tl">Ejecutado</div><div class="tv">${fmt(d.ejecutado)} <span style="font-size:10px;">${pp}%</span></div></div>
+              <div class="tot tsal"><div class="tl">Saldo</div><div class="tv">${fmt(d.saldo)}</div></div>
+            </div>
+          </div>
+          <div class="partida-body" id="${pid}">
+            <div class="bar-row">
+              <div class="bar-label"><span>Ejecución</span><span>${pp}%</span></div>
+              <div class="bar-bg"><div class="bar-fill" style="width:${pp}%"></div></div>
+            </div>
+      `;
+
+      if(d.solicitudes && d.solicitudes.length > 0) {
+        d.solicitudes.forEach(sol => {
+          const detalle = stripHtml(sol.detalle) || '—';
+          html += `
+            <div class="solicitud-item">
+              <div style="display:flex;flex-direction:column;gap:2px;flex:1;">
+                <div class="sol-fecha">${sol.fecha}</div>
+                <div class="sol-detalle">${detalle}</div>
+              </div>
+              <div class="sol-importe">${fmt(sol.importe)}</div>
+            </div>
+          `;
+        });
+      } else {
+        html += `<div class="no-solicitudes">Sin solicitudes aprobadas.</div>`;
+      }
+
+      html += `</div></div>`;
+    });
+
+    document.getElementById('contenido').innerHTML = html;
+    document.getElementById('updated').textContent = 'Actualizado: ' + new Date().toLocaleString('es-BO');
+
+  } catch(e) {
+    document.getElementById('contenido').innerHTML = '<div class="loading">❌ Error al cargar datos. Intente nuevamente.</div>';
+  }
+}
+
+cargar();
+</script>
+</body>
+</html>
